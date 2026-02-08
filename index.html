@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>الإتقان الشامل في Microsoft Excel</title>
+    <!-- المكتبات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #217346;
+            --secondary: #1C5E34;
+            --accent: #21A366;
+            --light: #F4F8F6;
+            --dark: #0F2418;
+            --gray: #6C757D;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            overflow-x: hidden;
+        }
+
+        /* شاشة البداية */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 2000;
+            animation: fadeOut 2s ease-out 3s forwards;
+            padding: 20px;
+        }
+
+        .intro-logo {
+            width: min(200px, 60vw);
+            height: min(200px, 60vw);
+            background-image: url('https://tse1.mm.bing.net/th/id/OIP.PFVipef1fbg98JZEG7gKyAHaHQ?rs=1&pid=ImgDetMain&o=7&rm=3');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: logoPulse 2s ease-in-out infinite;
+            margin-bottom: min(30px, 5vw);
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.2);
+        }
+
+        .intro-text {
+            color: white;
+            text-align: center;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 900;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: textFloat 3s ease-in-out infinite;
+            line-height: 1.3;
+            padding: 0 20px;
+        }
+
+        .intro-subtext {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            margin-top: 10px;
+            animation: fadeIn 1s ease-out 1s both;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* شريط التنقل */
+        .navbar {
+            background: white;
+            padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1rem, 3vw, 2rem);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            animation: fadeInDown 1s ease-out 4s forwards;
+            height: 70px;
+            padding-top: max(0.8rem, var(--safe-top));
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: clamp(8px, 2vw, 15px);
+            color: var(--primary);
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+        }
+
+        /* قائمة الجوال */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: clamp(1rem, 2vw, 2rem);
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.5rem, 2vw, 1rem);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        /* الهيرو */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: clamp(6rem, 15vw, 8rem) clamp(1rem, 4vw, 2rem) clamp(2rem, 6vw, 4rem);
+            text-align: center;
+            margin-top: 70px;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 4.5s forwards;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            max-width: 800px;
+            margin: 0 auto clamp(1.5rem, 3vw, 2rem);
+            opacity: 0.9;
+            padding: 0 clamp(0.5rem, 2vw, 1rem);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: clamp(0.8rem, 2vw, 1rem);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: clamp(0.8rem, 2vw, 1rem) clamp(1.2rem, 3vw, 2rem);
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            white-space: nowrap;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--light);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        /* المحتوى الرئيسي */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
+            opacity: 0;
+            animation: fadeIn 1s ease-out 5s forwards;
+        }
+
+        .section-title {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: clamp(2rem, 4vw, 3rem);
+            position: relative;
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(60px, 15vw, 100px);
+            height: 4px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* بطاقات الميزات */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+            gap: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: clamp(2rem, 4vw, 4rem);
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: clamp(1.5rem, 3vw, 2rem);
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            text-align: center;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--primary);
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .feature-card h3 {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+        }
+
+        .feature-card p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        /* البطاقات التفصيلية */
+        .excel-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr));
+            gap: clamp(1.5rem, 3vw, 2rem);
+            margin: clamp(2rem, 4vw, 3rem) 0;
+        }
+
+        .excel-card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .excel-card:hover {
+            transform: scale(1.02);
+        }
+
+        .excel-image {
+            width: 100%;
+            height: clamp(150px, 30vw, 200px);
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .excel-content {
+            padding: clamp(1rem, 2vw, 1.5rem);
+        }
+
+        .excel-content h3 {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            margin-bottom: clamp(0.5rem, 1.5vw, 0.8rem);
+        }
+
+        .excel-content p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        /* عرض الصور */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+            gap: clamp(1rem, 2vw, 1.5rem);
+            margin: clamp(2rem, 4vw, 3rem) 0;
+        }
+
+        .gallery-item {
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: clamp(150px, 30vw, 200px);
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-caption {
+            padding: clamp(0.8rem, 2vw, 1rem);
+            background: white;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+            color: var(--gray);
+        }
+
+        /* الجداول */
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: clamp(1.5rem, 3vw, 2rem) 0;
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+        }
+
+        .excel-table th {
+            background: var(--primary);
+            color: white;
+            padding: clamp(0.8rem, 2vw, 1.2rem);
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .excel-table td {
+            padding: clamp(0.8rem, 2vw, 1rem);
+            border-bottom: 1px solid #eee;
+            text-align: right;
+            word-break: break-word;
+        }
+
+        .excel-table tr:hover {
+            background: var(--light);
+        }
+
+        /* خطوات التعلم */
+        .learning-steps {
+            display: grid;
+            gap: clamp(1.5rem, 3vw, 2rem);
+            counter-reset: step-counter;
+        }
+
+        .step {
+            background: white;
+            padding: clamp(1.5rem, 3vw, 2rem);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            padding-right: clamp(3rem, 6vw, 4rem);
+        }
+
+        .step:before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            position: absolute;
+            right: clamp(-12px, -2vw, -15px);
+            top: clamp(-12px, -2vw, -15px);
+            background: var(--primary);
+            color: white;
+            width: clamp(35px, 8vw, 40px);
+            height: clamp(35px, 8vw, 40px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+        }
+
+        .step h3 {
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            margin-bottom: clamp(0.5rem, 1.5vw, 0.8rem);
+        }
+
+        .step p {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        /* الأسئلة الشائعة */
+        .faq-container {
+            max-width: 800px;
+            margin: clamp(2rem, 4vw, 3rem) auto;
+        }
+
+        .faq-item {
+            background: white;
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .faq-question {
+            padding: clamp(1rem, 2vw, 1.5rem);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--light);
+            font-weight: 600;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .faq-answer {
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-top: 1px solid #eee;
+            display: none;
+            font-size: clamp(0.9rem, 2vw, 1rem);
+        }
+
+        .faq-answer.show {
+            display: block;
+        }
+
+        /* الفوتر المعدل */
+        .team-footer {
+            background: var(--dark);
+            color: white;
+            padding: clamp(2rem, 5vw, 3rem) clamp(1rem, 3vw, 2rem);
+            text-align: center;
+            margin-top: clamp(2rem, 4vw, 4rem);
+            padding-bottom: max(clamp(2rem, 5vw, 3rem), var(--safe-bottom));
+        }
+
+        .team-title {
+            color: var(--accent);
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            margin-bottom: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 700;
+        }
+
+        .developer-name {
+            color: white;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin-bottom: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 600;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+            gap: clamp(1rem, 2vw, 1.5rem);
+            max-width: 1000px;
+            margin: clamp(1.5rem, 3vw, 2rem) auto;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.1);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            border-radius: var(--radius);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .team-member:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .team-member i {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--accent);
+            margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+        }
+
+        .team-member div {
+            font-size: clamp(0.9rem, 2vw, 1rem);
+            text-align: center;
+            word-break: break-word;
+        }
+
+        .copyright {
+            margin-top: clamp(1.5rem, 3vw, 2rem);
+            padding-top: clamp(1rem, 2vw, 1.5rem);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: clamp(0.8rem, 1.8vw, 0.9rem);
+        }
+
+        /* تأثيرات الحركة */
+        @keyframes fadeOut {
+            0% { opacity: 1; visibility: visible; }
+            99% { opacity: 0; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes textFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* تأثيرات */
+        .highlight {
+            background: linear-gradient(120deg, var(--accent) 0%, transparent 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: inherit;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: var(--accent);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 0.3rem;
+        }
+
+        /* التقدم */
+        .progress-container {
+            background: #eee;
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* قائمة الجوال */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100%;
+            background: white;
+            z-index: 1002;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+            padding: 80px 20px 20px;
+            overflow-y: auto;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 15px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+
+        .mobile-menu a:hover {
+            background: var(--light);
+            color: var(--primary);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* تحسينات للجوال */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                line-height: 1.3;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .excel-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-logo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .intro-text {
+                font-size: 1.8rem;
+            }
+
+            .hero {
+                padding-top: 5rem;
+            }
+
+            .navbar {
+                height: 60px;
+            }
+
+            .container {
+                padding: 1.5rem 1rem;
+            }
+
+            .excel-cards,
+            .features-grid,
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+        }
+
+        /* دعم الأجهزة المختلفة */
+        @media (hover: none) {
+            .feature-card:hover,
+            .excel-card:hover,
+            .gallery-item:hover,
+            .team-member:hover {
+                transform: none;
+            }
+            
+            .btn:hover {
+                transform: none;
+            }
+        }
+
+        /* تحسينات لشاشات كبيرة */
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+        }
+
+        /* دعم النظام المظلم */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #121212;
+                color: #e0e0e0;
+            }
+
+            .feature-card,
+            .excel-card,
+            .step,
+            .faq-item,
+            .excel-table,
+            .gallery-item {
+                background: #1e1e1e;
+                color: #e0e0e0;
+            }
+
+            .hero {
+                background: linear-gradient(135deg, #1a472a 0%, #2e8b57 100%);
+            }
+        }
+
+        /* Scrollbar شخصية */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* تحسينات للأجهزة التي تعمل باللمس */
+        @media (hover: hover) and (pointer: fine) {
+            .btn,
+            .nav-links a,
+            .team-member,
+            .feature-card,
+            .excel-card {
+                cursor: pointer;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- شاشة البداية مع الشعار -->
+    <div class="intro-screen">
+        <div class="intro-logo"></div>
+        <div class="intro-text">برمجة محمد علاء</div>
+        <div class="intro-subtext">Microsoft Excel Professional Guide</div>
+    </div>
+
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-file-excel"></i>
+            <span>إتقان Excel</span>
+        </div>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="nav-links">
+            <a href="#basics"><i class="fas fa-home"></i> الأساسيات</a>
+            <a href="#functions"><i class="fas fa-calculator"></i> الدوال</a>
+            <a href="#charts"><i class="fas fa-chart-bar"></i> المخططات</a>
+            <a href="#advanced"><i class="fas fa-rocket"></i> المتقدم</a>
+            <a href="#resources"><i class="fas fa-download"></i> المصادر</a>
+        </div>
+    </nav>
+
+    <!-- قائمة الجوال -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#basics"><i class="fas fa-home"></i> الأساسيات</a>
+        <a href="#functions"><i class="fas fa-calculator"></i> الدوال</a>
+        <a href="#charts"><i class="fas fa-chart-bar"></i> المخططات</a>
+        <a href="#advanced"><i class="fas fa-rocket"></i> المتقدم</a>
+        <a href="#resources"><i class="fas fa-download"></i> المصادر</a>
+        <a href="#" id="closeMobileMenu"><i class="fas fa-times"></i> إغلاق القائمة</a>
+    </div>
+
+    <!-- الهيرو -->
+    <section class="hero">
+        <h1>الإتقان الشامل في Microsoft Excel</h1>
+        <p>دليل شامل يغطي كل ما تحتاجه لإتقان برنامج Excel من الصفر إلى الاحتراف. تعلم الأساسيات، الدوال المتقدمة، المخططات، والتقارير الاحترافية.</p>
+        <div class="cta-buttons">
+            <a href="#basics" class="btn btn-primary">
+                <i class="fas fa-play-circle"></i> ابدأ التعلم الآن
+            </a>
+            <a href="#resources" class="btn btn-secondary">
+                <i class="fas fa-download"></i> تحميل ملفات التدريب
+            </a>
+        </div>
+    </section>
+
+    <!-- الأساسيات -->
+    <section class="container" id="basics">
+        <h2 class="section-title">أساسيات Excel للمبتدئين</h2>
+        <div class="excel-cards">
+            <div class="excel-card">
+                <img src="https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="واجهة Excel" class="excel-image">
+                <div class="excel-content">
+                    <h3><i class="fas fa-window-maximize"></i> التعرف على الواجهة</h3>
+                    <p>شريط الأدوات، الأوراق، الخلايا، الصفوف، الأعمدة، والشريط السريع.</p>
+                    <ul style="margin-top: 1rem; padding-right: 1rem;">
+                        <li>شريط العنوان والمهام</li>
+                        <li>شريط الصيغ والأشرطة</li>
+                        <li>شريط التمرير والأوراق</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="excel-card">
+                <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="إدخال البيانات" class="excel-image">
+                <div class="excel-content">
+                    <h3><i class="fas fa-keyboard"></i> إدخال البيانات</h3>
+                    <p>تقنيات إدخال البيانات بسرعة والتنقل بين الخلايا.</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: 30%"></div>
+                    </div>
+                    <small>التقدم في هذا القسم: 30%</small>
+                </div>
+            </div>
+
+            <div class="excel-card">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="التنسيق" class="excel-image">
+                <div class="excel-content">
+                    <h3><i class="fas fa-paint-brush"></i> التنسيق الأساسي</h3>
+                    <p>تنسيق الخطوط، الألوان، المحاذاة، والتنسيق الشرطي البسيط.</p>
+                    <button class="btn btn-primary" style="margin-top: 1rem; padding: 0.5rem 1rem; font-size: 0.9rem;">
+                        <i class="fas fa-play"></i> مشاهدة الدرس
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- الدوال الأساسية -->
+    <section class="container" id="functions">
+        <h2 class="section-title">أهم الدوال في Excel</h2>
+        
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>اسم الدالة</th>
+                    <th>الوصف</th>
+                    <th>الصيغة</th>
+                    <th>المثال</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="highlight">SUM</span></td>
+                    <td>جمع نطاق من الخلايا</td>
+                    <td><code>=SUM(A1:A10)</code></td>
+                    <td>مجموع العمود A</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">AVERAGE</span></td>
+                    <td>متوسط القيم</td>
+                    <td><code>=AVERAGE(B1:B20)</code></td>
+                    <td>متوسط الدرجات</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">IF</span></td>
+                    <td>دالة شرطية</td>
+                    <td><code>=IF(C1>50,"ناجح","راسب")</code></td>
+                    <td>تحديد النجاح والرسوب</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">VLOOKUP</span> <span class="badge">مهم</span></td>
+                    <td>البحث الرأسي</td>
+                    <td><code>=VLOOKUP(D1,$A$1:$B$10,2,FALSE)</code></td>
+                    <td>البحث في الجداول</td>
+                </tr>
+                <tr>
+                    <td><span class="highlight">COUNTIF</span></td>
+                    <td>عد الخلايا حسب شرط</td>
+                    <td><code>=COUNTIF(E1:E100,">1000")</code></td>
+                    <td>عدد المبيعات فوق 1000</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- المخططات -->
+    <section class="container" id="charts">
+        <h2 class="section-title">المخططات والرسوم البيانية</h2>
+        
+        <div class="image-gallery">
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="مخطط عمودي">
+                <div class="image-caption">مخطط الأعمدة - للمقارنة بين العناصر</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="مخطط دائري">
+                <div class="image-caption">المخطط الدائري - للنسب المئوية</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="مخطط خطي">
+                <div class="image-caption">المخطط الخطي - لتتبع التغيرات</div>
+            </div>
+        </div>
+
+        <div class="learning-steps">
+            <div class="step">
+                <h3>اختيار نوع المخطط المناسب</h3>
+                <p>تعلم متى تستخدم كل نوع من المخططات بناءً على نوع البيانات والهدف من التمثيل البصري.</p>
+            </div>
+            <div class="step">
+                <h3>تخصيص المخططات</h3>
+                <p>تغيير الألوان، الإضافات، التسميات، والعناوين لجعل المخططات أكثر وضوحاً وجاذبية.</p>
+            </div>
+            <div class="step">
+                <h3>المخططات الديناميكية</h3>
+                <p>ربط المخططات بجداول محورية PivotTables لعرض البيانات المتغيرة تلقائياً.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- المستوى المتقدم -->
+    <section class="container" id="advanced">
+        <h2 class="section-title">تقنيات Excel المتقدمة</h2>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-table"></i>
+                </div>
+                <h3>الجداول المحورية PivotTables</h3>
+                <p>تحليل البيانات المعقدة وإنشاء تقارير تفاعلية بسرعة وسهولة.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>ماكرو VBA</h3>
+                <p>أتمتة المهام المتكررة وإنشاء تطبيقات مصغرة داخل Excel.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3>ربط البيانات الخارجية</h3>
+                <p>ربط Excel بقواعد البيانات وخدمات الويب والمصادر الخارجية.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- المصادر -->
+    <section class="container" id="resources">
+        <h2 class="section-title">ملفات ومصادر للتحميل</h2>
+        
+        <div class="excel-cards">
+            <div class="excel-card">
+                <div class="excel-content">
+                    <h3><i class="fas fa-file-excel"></i> ملفات التدريب العملية</h3>
+                    <p>مجموعة من ملفات Excel جاهزة للتدريب تتضمن:</p>
+                    <ul style="margin: 1rem 0; padding-right: 1.5rem;">
+                        <li>قوالب ميزانية شخصية</li>
+                        <li>جدول متابعة المشاريع</li>
+                        <li>نظام إدارة المخزون</li>
+                        <li>تحليل بيانات المبيعات</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary download-btn">
+                        <i class="fas fa-download"></i> تحميل الملفات (25MB)
+                    </a>
+                </div>
+            </div>
+            
+            <div class="excel-card">
+                <div class="excel-content">
+                    <h3><i class="fas fa-book"></i> دليل المرجع السريع</h3>
+                    <p>PDF يحتوي على جميع دوال Excel مع أمثلة عملية.</p>
+                    <div style="margin: 1.5rem 0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>الدوال المالية</span>
+                            <span>85%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 85%"></div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; margin: 1rem 0 0.5rem;">
+                            <span>الدوال النصية</span>
+                            <span>70%</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 70%"></div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn btn-secondary download-btn">
+                        <i class="fas fa-file-pdf"></i> تحميل الدليل
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- الأسئلة الشائعة -->
+    <section class="container">
+        <h2 class="section-title">الأسئلة الشائعة</h2>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    ما هي أفضل طريقة لتعلم Excel؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    أفضل طريقة هي التعلم بالتطبيق العملي. ابدأ بالأساسيات ثم انتقل إلى الدوال البسيطة، ثم المتقدمة، ثم الجداول المحورية والمخططات.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    كم من الوقت أحتاج لإتقان Excel؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <ul style="padding-right: 1.5rem;">
+                        <li>الأساسيات: 2-3 أسابيع</li>
+                        <li>الدوال المتوسطة: 1-2 شهر</li>
+                        <li>المستوى المتقدم: 3-6 أشهر</li>
+                        <li>الإتقان الكامل: سنة مع الممارسة المستمرة</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    ما هي أهم دوال Excel للعمل؟
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    VLOOKUP، SUMIFS، IF، INDEX/MATCH، PivotTables، والتنسيق الشرطي.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- الفوتر المعدل -->
+    <footer class="team-footer">
+        <div class="developer-name">برمجة وتطوير محمد مع فريق العمل</div>
+        <div class="team-grid">
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>علي ناجي</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>علي رحيم</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>جعفر هاشم</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>ازهر كاظم</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>باسم صعيد</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>عباس عبد الامير</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>انهار عادل</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>زهراء كريم</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>🤞M😎 </div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>حسن علي</div>
+            </div>
+            <div class="team-member">
+                <i class="fas fa-user-tie"></i>
+                <div>حسين بهاء</div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 جميع الحقوق محفوظة | تصميم وتطوير فريق العمل
+        </div>
+    </footer>
+
+    <!-- زر العودة للأعلى -->
+    <button class="scroll-top-btn" id="scrollTopBtn" aria-label="العودة إلى الأعلى">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <script>
+        // تهيئة الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // عناصر DOM
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+            const closeMobileMenu = document.getElementById('closeMobileMenu');
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            
+            // إدارة قائمة الجوال
+            function toggleMobileMenu() {
+                mobileMenu.classList.toggle('active');
+                menuOverlay.classList.toggle('active');
+                document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
+            }
+            
+            menuToggle.addEventListener('click', toggleMobileMenu);
+            menuOverlay.addEventListener('click', toggleMobileMenu);
+            closeMobileMenu.addEventListener('click', toggleMobileMenu);
+            
+            // إغلاق القائمة عند النقر على رابط
+            document.querySelectorAll('.mobile-menu a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (!e.target.id === 'closeMobileMenu') {
+                        toggleMobileMenu();
+                    }
+                });
+            });
+            
+            // زر العودة للأعلى
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    scrollTopBtn.style.display = 'flex';
+                } else {
+                    scrollTopBtn.style.display = 'none';
+                }
+            });
+            
+            scrollTopBtn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // الأسئلة الشائعة
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const icon = question.querySelector('i');
+                    
+                    answer.classList.toggle('show');
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                });
+            });
+            
+            // تتبع التقدم
+            function updateProgress() {
+                const progressBars = document.querySelectorAll('.progress-bar');
+                progressBars.forEach(bar => {
+                    const targetWidth = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = targetWidth;
+                    }, 500);
+                });
+            }
+            
+            // تحديث أولي
+            setTimeout(updateProgress, 5000);
+            
+            // محاكاة التحميل
+            function simulateDownload(button, text, time = 2000) {
+                const originalText = button.innerHTML;
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري التحميل...`;
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    button.innerHTML = `<i class="fas fa-check"></i> ${text}`;
+                    button.style.background = 'var(--accent)';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        button.style.background = '';
+                    }, 3000);
+                }, time);
+            }
+            
+            // إضافة محاكاة التحميل للأزرار
+            document.querySelectorAll('.download-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    simulateDownload(btn, 'تم التحميل بنجاح!');
+                });
+            });
+            
+            // التأخير في تحميل الصور المفقودة
+            setTimeout(() => {
+                const images = document.querySelectorAll('img');
+                const fallbackImages = {
+                    'واجهة Excel': 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'إدخال البيانات': 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'التنسيق': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'مخطط عمودي': 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'مخطط دائري': 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                    'مخطط خطي': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+                };
+                
+                images.forEach(img => {
+                    img.onerror = function() {
+                        const alt = this.alt || '';
+                        if (fallbackImages[alt]) {
+                            this.src = fallbackImages[alt];
+                        } else {
+                            this.src = 'https://via.placeholder.com/800x400/217346/FFFFFF?text=Excel+Image';
+                        }
+                    };
+                });
+            }, 4000);
+            
+            // تحسينات للجوال
+            function handleResize() {
+                if (window.innerWidth > 768) {
+                    mobileMenu.classList.remove('active');
+                    menuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            window.addEventListener('resize', handleResize);
+            
+            // تحميل الصور بكسل أقل للجوال
+            function optimizeImages() {
+                const images = document.querySelectorAll('img');
+                const isMobile = window.innerWidth < 768;
+                
+                images.forEach(img => {
+                    if (isMobile) {
+                        img.loading = 'lazy';
+                        img.decoding = 'async';
+                    }
+                });
+            }
+            
+            optimizeImages();
+            
+            // تأثيرات لفريق العمل
+            const teamMembers = document.querySelectorAll('.team-member');
+            teamMembers.forEach((member, index) => {
+                member.style.animationDelay = `${index * 0.1}s`;
+                member.style.animation = 'fadeInUp 0.5s ease-out both';
+            });
+            
+            // إضافة Touch Events للأجهزة التي تعمل باللمس
+            document.addEventListener('touchstart', function() {}, {passive: true});
+            
+            // تحسين أداء التمرير
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                document.body.style.pointerEvents = 'none';
+                scrollTimeout = setTimeout(() => {
+                    document.body.style.pointerEvents = 'auto';
+                }, 100);
+            });
+            
+            // تحسين استهلاك البطارية
+            let lastScrollTop = 0;
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                if (Math.abs(scrollTop - lastScrollTop) > 50) {
+                    lastScrollTop = scrollTop;
+                    // تحديث العناصر المرئية فقط
+                    document.querySelectorAll('.feature-card, .excel-card, .team-member').forEach(el => {
+                        const rect = el.getBoundingClientRect();
+                        if (rect.top < window.innerHeight && rect.bottom > 0) {
+                            el.style.willChange = 'transform';
+                        } else {
+                            el.style.willChange = 'auto';
+                        }
+                    });
+                }
+            });
+        });
+        
+        // تحسينات للأداء
+        window.addEventListener('load', function() {
+            // إزالة تأثيرات الرسوم المتحركة للأجهزة البطيئة
+            const isLowPerformance = navigator.hardwareConcurrency < 4 || 
+                                   (navigator.deviceMemory && navigator.deviceMemory < 4);
+            
+            if (isLowPerformance) {
+                document.querySelectorAll('*').forEach(el => {
+                    el.style.animation = 'none';
+                    el.style.transition = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
